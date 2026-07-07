@@ -74,7 +74,7 @@ export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 export function shouldForwardLogLevel(level: LogLevel): boolean {
   return level === 'debug' || level === 'error';
 }
-export type Backend = 'auto' | 'hyprland' | 'sway' | 'x11' | 'macos' | 'windows';
+export type Backend = 'auto' | 'hyprland' | 'sway' | 'niri' | 'x11' | 'macos' | 'windows';
 export type JimakuLanguagePreference = 'ja' | 'en' | 'none';
 
 export interface LauncherAiConfig {

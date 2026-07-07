@@ -22,70 +22,80 @@ import { SwayWindowTracker } from './sway-tracker';
 import { X11WindowTracker } from './x11-tracker';
 import { MacOSWindowTracker } from './macos-tracker';
 import { WindowsWindowTracker } from './windows-tracker';
+import { NiriWindowTracker } from './niri-tracker';
 import { createLogger } from '../logger';
 
 const log = createLogger('tracker');
 
-export type Compositor = 'hyprland' | 'sway' | 'x11' | 'macos' | 'windows' | null;
+export type Compositor = 'hyprland' | 'sway' | 'niri' | 'x11' | 'macos' | 'windows' | null;
 export type Backend = 'auto' | Exclude<Compositor, null>;
 
 export function detectCompositor(): Compositor {
-  if (process.platform === 'win32') return 'windows';
-  if (process.platform === 'darwin') return 'macos';
-  if (process.env.HYPRLAND_INSTANCE_SIGNATURE) return 'hyprland';
-  if (process.env.SWAYSOCK) return 'sway';
-  if (process.platform === 'linux') return 'x11';
-  return null;
+	if (process.platform === 'win32') return 'windows';
+	if (process.platform === 'darwin') return 'macos';
+	if (process.env.HYPRLAND_INSTANCE_SIGNATURE) return 'hyprland';
+	if (process.env.SWAYSOCK || process.env.I3SOCK) return 'sway';
+	if (
+		process.env.NIRI_SOCKET ||
+		(process.env.XDG_CURRENT_DESKTOP || '').toLowerCase().includes('niri') ||
+		(process.env.XDG_SESSION_DESKTOP || '').toLowerCase().includes('niri')
+	) return 'niri';
+	if (process.platform === 'linux') return 'x11';
+	return null;
 }
 
 function normalizeCompositor(value: string): Compositor | null {
-  const normalized = value.trim().toLowerCase();
-  if (normalized === 'hyprland') return 'hyprland';
-  if (normalized === 'sway') return 'sway';
-  if (normalized === 'x11') return 'x11';
-  if (normalized === 'macos') return 'macos';
-  if (normalized === 'windows') return 'windows';
-  return null;
+	const normalized = value.trim().toLowerCase();
+	if (normalized === 'hyprland') return 'hyprland';
+	if (normalized === 'sway') return 'sway';
+	if (normalized === 'niri') return 'niri';
+	if (normalized === 'x11') return 'x11';
+	if (normalized === 'macos') return 'macos';
+	if (normalized === 'windows') return 'windows';
+	return null;
 }
 
 export function createWindowTracker(
-  override?: string | null,
-  targetMpvSocketPath?: string | null,
+	override?: string | null,
+	targetMpvSocketPath?: string | null,
 ): BaseWindowTracker | null {
-  let compositor = detectCompositor();
+	let compositor = detectCompositor();
 
-  if (override && override !== 'auto') {
-    const normalized = normalizeCompositor(override);
-    if (normalized) {
-      compositor = normalized;
-    } else {
-      log.warn(`Unsupported backend override "${override}", falling back to auto.`);
-    }
-  }
-  log.info(`Detected compositor: ${compositor || 'none'}`);
+	if (override && override !== 'auto') {
+		const normalized = normalizeCompositor(override);
+		if (normalized) {
+			compositor = normalized;
+		} else {
+			log.warn(`Unsupported backend override "${override}", falling back to auto.`);
+		}
+	}
+	log.info(`Detected compositor: ${compositor || 'none'}`);
 
-  switch (compositor) {
-    case 'hyprland':
-      return new HyprlandWindowTracker(targetMpvSocketPath?.trim() || undefined);
-    case 'sway':
-      return new SwayWindowTracker(targetMpvSocketPath?.trim() || undefined);
-    case 'x11':
-      return new X11WindowTracker(targetMpvSocketPath?.trim() || undefined);
-    case 'macos':
-      return new MacOSWindowTracker(targetMpvSocketPath?.trim() || undefined);
-    case 'windows':
-      return new WindowsWindowTracker(targetMpvSocketPath?.trim() || undefined);
-    default:
-      log.warn('No supported compositor detected. Window tracking disabled.');
-      return null;
-  }
+	switch (compositor) {
+		case 'hyprland':
+			return new HyprlandWindowTracker(targetMpvSocketPath?.trim() || undefined);
+		case 'sway':
+			return new SwayWindowTracker(targetMpvSocketPath?.trim() || undefined);
+		case 'niri':
+			return new NiriWindowTracker(targetMpvSocketPath?.trim() || undefined);
+		case 'x11':
+			return new X11WindowTracker(targetMpvSocketPath?.trim() || undefined);
+		case 'macos':
+			return new MacOSWindowTracker(targetMpvSocketPath?.trim() || undefined);
+		case 'windows':
+			return new WindowsWindowTracker(targetMpvSocketPath?.trim() || undefined);
+		default:
+			log.warn('No supported compositor detected. Window tracking disabled.');
+			return null;
+	}
 }
 
 export {
-  BaseWindowTracker,
-  HyprlandWindowTracker,
-  SwayWindowTracker,
-  X11WindowTracker,
-  MacOSWindowTracker,
-  WindowsWindowTracker,
+	BaseWindowTracker,
+	HyprlandWindowTracker,
+	SwayWindowTracker,
+	NiriWindowTracker,
+	X11WindowTracker,
+	MacOSWindowTracker,
+	WindowsWindowTracker,
 };

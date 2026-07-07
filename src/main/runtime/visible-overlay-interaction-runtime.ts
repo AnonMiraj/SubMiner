@@ -289,7 +289,9 @@ export function createVisibleOverlayInteractionRuntime(deps: VisibleOverlayInter
     if (initialArgs && isHeadlessInitialCommand(initialArgs)) {
       return null;
     }
-    return createWindowTrackerCore(override, targetMpvSocketPath);
+    const tracker = createWindowTrackerCore(override, targetMpvSocketPath);
+    logger.info(`overlay backend: ${tracker?.constructor.name ?? 'none'}`);
+    return tracker;
   }
 
   function bindVisibleOverlayOwner(): void {

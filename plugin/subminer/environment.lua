@@ -246,6 +246,10 @@ function M.create(ctx)
 			backend = "hyprland"
 		elseif os.getenv("SWAYSOCK") then
 			backend = "sway"
+		elseif os.getenv("NIRI_SOCKET") or
+			(string.find(string.lower(os.getenv("XDG_CURRENT_DESKTOP") or ""), "niri", 1, true))
+			then
+			backend = "niri"
 		elseif os.getenv("XDG_SESSION_TYPE") == "x11" or os.getenv("DISPLAY") then
 			backend = "x11"
 		else

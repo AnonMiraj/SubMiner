@@ -60,13 +60,14 @@ function parseBackend(value: string): Backend {
     value === 'auto' ||
     value === 'hyprland' ||
     value === 'sway' ||
+    value === 'niri' ||
     value === 'x11' ||
     value === 'macos' ||
     value === 'windows'
   ) {
     return value as Backend;
   }
-  fail(`Invalid backend: ${value} (must be auto, hyprland, sway, x11, macos, or windows)`);
+  fail(`Invalid backend: ${value} (must be auto, hyprland, sway, niri, x11, macos, or windows)`);
 }
 
 function appendMpvProfile(current: string, next: string): string {

@@ -459,6 +459,12 @@ export function detectBackend(
   ) {
     return 'hyprland';
   }
+  if (env.NIRI_SOCKET ||
+    linuxDesktopEnv.xdgCurrentDesktop.includes('niri') ||
+    linuxDesktopEnv.xdgSessionDesktop.includes('niri')
+  ) {
+    return 'niri';
+  }
   if (linuxDesktopEnv.hasWayland && commandExists('hyprctl')) return 'hyprland';
   if (env.DISPLAY) return 'x11';
   fail('Could not detect display backend');
