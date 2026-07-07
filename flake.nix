@@ -34,6 +34,7 @@
               bun run build:renderer 2>&1
               bun run build:settings 2>&1
               tsc -p tsconfig.json 2>&1
+              bun run build:launcher 2>&1
             '';
             installPhase = ''
               mkdir -p $out/share/subminer
