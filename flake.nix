@@ -9,13 +9,8 @@
   outputs = inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" ];
-
-      nixpkgs.config = {
-        permittedInsecurePackages = [ "electron-39.8.10" ];
-      };
-
       perSystem = { pkgs, ... }: let
-        inherit (pkgs) lib stdenv bun makeWrapper symlinkJoin nodejs esbuild typescript runCommand electron_39;
+        inherit (pkgs) lib stdenv bun makeWrapper symlinkJoin nodejs esbuild typescript runCommand electron;
       in {
         packages.default = let
           version = "0.17.2-niri";
@@ -47,7 +42,7 @@
             nativeBuildInputs = [ makeWrapper ];
           } ''
             mkdir -p $out/bin
-            makeWrapper ${electron_39}/bin/electron $out/bin/SubMiner \
+            makeWrapper ${electron}/bin/electron $out/bin/SubMiner \
               --add-flags ${electronApp}/share/subminer \
               --add-flags "--no-sandbox" \
               --set-default ELECTRON_OZONE_PLATFORM_HINT "x11"
