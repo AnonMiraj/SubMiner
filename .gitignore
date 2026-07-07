@@ -12,7 +12,6 @@ release/*
 !release/
 !release/release-notes.md
 !release/prerelease-notes.md
-build/yomitan/
 coverage/
 
 # Launcher build artifact (produced by make build-launcher)
