@@ -9,6 +9,11 @@
   outputs = inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" ];
+
+      nixpkgs.config = {
+        permittedInsecurePackages = [ "electron-39.8.10" ];
+      };
+
       perSystem = { pkgs, ... }: let
         inherit (pkgs) lib stdenv bun makeWrapper symlinkJoin nodejs esbuild typescript runCommand electron_39;
       in {
