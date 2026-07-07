@@ -22,11 +22,15 @@
             nativeBuildInputs = [ bun nodejs esbuild typescript ];
             buildPhase = ''
               export HOME=$TMPDIR/home
+              cp -r $src builddir
+              chmod -R u+w builddir
+              cd builddir
+
               bun install --frozen-lockfile 2>&1
               cd vendor/texthooker-ui && bun install --frozen-lockfile 2>&1
-              cd $src
+              cd ..
               cd stats && bun install --frozen-lockfile 2>&1 && bun run build 2>&1
-              cd $src
+              cd ..
               bun run build:renderer 2>&1
               bun run build:settings 2>&1
               tsc -p tsconfig.json 2>&1
