@@ -9,13 +9,13 @@
   outputs = inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" ];
-
-      nixpkgs.config.permittedInsecurePackages = [
-        "electron-39.8.10"
-      ];
-
-      perSystem = { pkgs, ... }: let
-        inherit (pkgs) lib stdenv bun makeWrapper symlinkJoin nodejs esbuild typescript runCommand electron_39;
+      perSystem = { pkgs, system, ... }: let
+        # Allow electron_39 (marked insecure)
+        pkgs' = import inputs.nixpkgs {
+          inherit system;
+          config.permittedInsecurePackages = [ "electron-39.8.10" ];
+        };
+        inherit (pkgs') lib stdenv bun makeWrapper symlinkJoin nodejs esbuild typescript runCommand electron_39;
       in {
         packages.default = let
           version = "0.17.2-niri";
@@ -40,6 +40,7 @@
               bun run build:settings 2>&1
               tsc -p tsconfig.json 2>&1
               bun run build:launcher 2>&1
+              bun run build:assets 2>&1
             '';
             installPhase = ''
               mkdir -p $out/share/subminer
