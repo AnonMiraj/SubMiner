@@ -43,11 +43,13 @@ export function getLinuxDesktopEnv(env: NodeJS.ProcessEnv = process.env): LinuxD
 export function isSupportedWaylandCompositor(env: NodeJS.ProcessEnv = process.env): boolean {
   const desktop = getLinuxDesktopEnv(env);
   return (
-    Boolean(env.HYPRLAND_INSTANCE_SIGNATURE || env.SWAYSOCK) ||
+    Boolean(env.HYPRLAND_INSTANCE_SIGNATURE || env.SWAYSOCK || env.NIRI_SOCKET) ||
     desktop.xdgCurrentDesktop.includes('hyprland') ||
     desktop.xdgCurrentDesktop.includes('sway') ||
+    desktop.xdgCurrentDesktop.includes('niri') ||
     desktop.xdgSessionDesktop.includes('hyprland') ||
-    desktop.xdgSessionDesktop.includes('sway')
+    desktop.xdgSessionDesktop.includes('sway') ||
+    desktop.xdgSessionDesktop.includes('niri')
   );
 }
 
