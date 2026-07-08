@@ -36,10 +36,12 @@
               cd ..
               cd stats && bun install --frozen-lockfile 2>&1 && bun run build 2>&1
               cd ..
-              bun run build:renderer 2>&1
-              bun run build:settings 2>&1
+              # Compile TypeScript (covers all files including preload scripts)
               tsc -p tsconfig.json 2>&1
               bun run build:launcher 2>&1
+              # Build renderer + settings with bun (not esbuild) for reliable ESM output
+              bun build ./src/renderer/renderer.ts --outdir=./dist/renderer --splitting --target=browser --format=esm --external:electron 2>&1
+              bun build ./src/settings/settings.ts --outdir=./dist/settings --splitting --target=browser --format=esm --external:electron 2>&1
               bun run build:assets 2>&1
             '';
             installPhase = ''
