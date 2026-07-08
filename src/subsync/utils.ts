@@ -28,6 +28,7 @@ const DEFAULT_SUBSYNC_EXECUTABLE_PATHS = {
   ffsubsync: 'ffsubsync',
   ffmpeg: 'ffmpeg',
 } as const;
+} as const;
 
 export interface SubsyncContext {
   videoPath: string;
