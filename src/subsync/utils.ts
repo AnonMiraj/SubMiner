@@ -24,9 +24,10 @@ export interface SubsyncResolvedConfig {
 }
 
 const DEFAULT_SUBSYNC_EXECUTABLE_PATHS = {
-  alass: '/usr/bin/alass',
-  ffsubsync: '/usr/bin/ffsubsync',
-  ffmpeg: '/usr/bin/ffmpeg',
+  alass: 'alass',
+  ffsubsync: 'ffsubsync',
+  ffmpeg: 'ffmpeg',
+} as const;
 } as const;
 
 export interface SubsyncContext {
